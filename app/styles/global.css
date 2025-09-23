@@ -1,0 +1,951 @@
+﻿:root {
+  --bg-body: #f5f6f9;
+  --bg-surface: #ffffff;
+  --bg-muted: #f8f9fb;
+  --bg-hover: #fbf4f4;
+  --bg-accent: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 10px 28px rgba(17, 24, 39, 0.08);
+  --shadow-md: 0 16px 40px rgba(17, 24, 39, 0.12);
+  --brand: #ef4444;
+  --brand-dark: #b91c1c;
+  --success: #16a34a;
+  --success-bg: rgba(22, 163, 74, 0.12);
+  --warning: #d97706;
+  --warning-bg: rgba(217, 119, 6, 0.16);
+  --danger: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.16);
+  font-family: 'Inter', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+
+/* Ripple animation for bottom nav bar */
+@keyframes ripple {
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Product Card Enhancements */
+.product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Product category badge */
+.product-category-badge {
+  align-self: flex-start;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+
+@media (max-width: 560px) {
+  .product-category-badge {
+    margin: 0 0 4px 0;
+    display: inline-block;
+  }
+}
+
+/* Image Animation */
+.carousel-image img, .product-preview img {
+  transition: transform 0.5s ease;
+}
+
+.carousel-image:hover img, .product-preview:hover img {
+  transform: scale(1.03);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top right, rgba(239, 68, 68, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.6) 0%, rgba(241, 245, 249, 0.4) 100%),
+    var(--bg-body);
+  color: var(--text-primary);
+  min-height: 100vh;
+  /* Prevent layout shifts / horizontal overflow caused by wide slides */
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  position: sticky;
+  top: 0;
+  /* make header sit above carousels and other content */
+  z-index: 60;
+}
+
+.app-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-badge {
+  background: var(--bg-accent);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  /* ensure absolutely-positioned mobile menus are positioned relative to this */
+  position: relative;
+}
+
+.mobile-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--bg-accent);
+  border: none;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  /* ensure it's above other content when shown */
+  z-index: 70;
+}
+
+.nav-links {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+  color: #ffffff;
+  background: var(--bg-accent);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.content-shell {
+  flex: 1;
+  max-width: 1180px;
+  margin: 36px auto 72px;
+  padding: 0 20px 72px;
+  width: 100%;
+}
+
+.banner {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(239, 68, 68, 0.24);
+}
+
+.banner strong {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-size: clamp(28px, 4vw, 36px);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.page-header .intro {
+  font-size: clamp(15px, 2.5vw, 16px);
+  color: var(--text-secondary);
+  max-width: 680px;
+  line-height: 1.7;
+}
+
+.page-header .actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  padding: clamp(20px, 4vw, 26px);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  background: var(--bg-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.card.compact {
+  padding: clamp(18px, 3vw, 22px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.card-subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.badge.success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge.warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge.danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge.neutral {
+  background: rgba(17, 24, 39, 0.08);
+  color: var(--text-primary);
+}
+
+.button,
+button.button,
+input[type="submit"].button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  background: rgba(17, 24, 39, 0.05);
+  color: var(--text-primary);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.12);
+}
+
+.button.primary {
+  background: var(--bg-accent);
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(239, 68, 68, 0.26);
+}
+
+.button.primary:hover {
+  box-shadow: 0 18px 36px rgba(239, 68, 68, 0.32);
+}
+
+.button.ghost {
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.button.outline {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.grid {
+  display: grid;
+  gap: 24px;
+}
+
+.grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.grid.three {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid.form {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.section-title {
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+input,
+select,
+textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text-primary);
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(239, 68, 68, 0.36);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.helper-text {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.table-wrapper {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-primary);
+}
+
+thead {
+  background: rgba(248, 250, 252, 0.9);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+thead th {
+  padding: clamp(12px, 2vw, 16px);
+  text-align: left;
+}
+
+tbody td {
+  padding: clamp(14px, 2.2vw, 18px);
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  font-size: 14px;
+}
+
+tr:hover td {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.carousel {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: var(--shadow-sm);
+  /* avoid carousel forcing horizontal scroll on small devices */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.45s ease;
+  will-change: transform;
+  width: 100%;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  flex: 0 0 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: clamp(20px, 5vw, 32px);
+  align-items: center;
+  /* make sure each slide respects container padding and doesn't overflow */
+  box-sizing: border-box;
+  justify-items: center; /* center children when single-column */
+}
+
+.carousel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--radius-md);
+}
+
+.carousel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 20px;
+}
+
+.carousel-content h2 {
+  font-size: clamp(18px, 5vw, 24px);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.carousel-content .price {
+  font-weight: 700;
+  font-size: clamp(16px, 4vw, 18px);
+  margin-top: 4px;
+  color: var(--brand);
+  display: block;
+  text-align: left;
+}
+
+.carousel-content .buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 12px;
+  justify-content: flex-start;
+}
+
+.carousel-image {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #f3f4f6;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 400px;
+}
+
+.carousel-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 10;
+  padding-bottom: 6px;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.carousel-dot.is-active {
+  background: var(--brand);
+  transform: scale(1.1);
+}
+
+.empty-state {
+  text-align: center;
+  padding: clamp(40px, 6vw, 56px);
+  border-radius: var(--radius-lg);
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+}
+
+.mini-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-card strong {
+  font-size: 24px;
+}
+
+.table-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-note {
+  margin-top: 64px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .app-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav-wrapper {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .mobile-nav-toggle {
+    display: inline-flex;
+    align-self: flex-end;
+  }
+  /* Mobile menu: position menus absolutely under the header so the toggle remains visible
+     and they can overlay content without pushing layout. Limit height to viewport. */
+  .nav-links,
+  .nav-actions {
+    display: none;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: calc(100% + 8px);
+    flex-direction: column;
+    width: auto;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    gap: 12px;
+    max-height: calc(100vh - 120px);
+    overflow: auto;
+    z-index: 65;
+  }
+  .nav-links.is-open,
+  .nav-actions.is-open {
+    display: flex;
+  }
+  .nav-link {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .card {
+    padding: 18px;
+  }
+  .page-header h1 {
+    font-size: 26px;
+  }
+  thead {
+    display: none;
+  }
+  tbody td {
+    display: grid;
+    gap: 4px;
+    padding: 14px;
+  }
+  tbody td::before {
+    content: attr(data-label);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  
+  /* Carousel Mobile Styles */
+  .carousel-slide {
+    grid-template-columns: 1fr;
+    padding: 16px 16px; /* add inner padding per slide */
+  }
+  .carousel {
+    margin-top: 8px; /* avoid sticking to header */
+  }
+  
+  .carousel {
+    margin: 0 auto;             /* center horizontally */
+    width: 100%;                 /* follow parent width */
+    padding: 0;                  /* no inner padding to prevent next slide peeking */
+    border-radius: var(--radius-lg);
+    background: var(--bg-surface);
+  }
+  
+  .carousel-image {
+    min-height: 180px;
+    margin: 0 auto;
+    width: 100%;
+    order: -1; /* Move image to top on mobile */
+    max-height: 240px;
+    border-radius: var(--radius-md);
+    aspect-ratio: 16 / 9;
+  }
+  
+  .carousel-content {
+    padding: 0 4px 24px; /* inner spacing, outer handled by .carousel */
+    text-align: left;
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  .carousel-content h2 {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  
+  .carousel-content p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .carousel-content .buttons {
+    justify-content: stretch;
+    margin-top: 12px;
+    gap: 10px;
+  }
+  .carousel-content .buttons .button {
+    flex: 1 1 0;
+    text-align: center;
+  }
+
+  /* keep dots clear of content */
+  .carousel {
+    padding-bottom: 32px;
+  }
+  
+  /* Bottom Navigation Bar Styles */
+  .bottom-nav-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.08);
+    z-index: 9999; /* Increased z-index to ensure it's always on top */
+    height: 64px;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid var(--border-subtle);
+    padding-bottom: env(safe-area-inset-bottom);
+    transition: transform 0.3s ease;
+    will-change: transform;
+  }
+  
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    font-size: 11px;
+    font-weight: 500;
+    position: relative;
+    padding: 8px 0;
+    overflow: hidden;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .bottom-nav-item:active {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .bottom-nav-item.is-active {
+    color: var(--brand);
+    font-weight: 600;
+  }
+  
+  .bottom-nav-item.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 3px;
+    background: var(--brand);
+    border-radius: 8px 8px 0 0;
+    animation: slideIn 0.3s ease forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      width: 0;
+      opacity: 0;
+    }
+    to {
+      width: 32px;
+      opacity: 1;
+    }
+  }
+  
+  .bottom-nav-icon {
+    margin-bottom: 4px;
+  }
+  
+  .bottom-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.5;
+  }
+  
+  /* Add padding to the bottom of the main content when on mobile */
+  .app-main {
+    padding-bottom: 0;
+  }
+  
+  @media (max-width: 767px) {
+    .bottom-nav-bar {
+      display: flex;
+    }
+    
+    .app-main {
+      padding-bottom: 80px;
+    }
+    
+    /* Hide the top navigation bar on mobile */
+    .app-header .nav-wrapper .nav-links {
+      display: none;
+    }
+    
+    /* Hide the original nav buttons for mobile */
+    .nav-actions .button {
+      display: none;
+    }
+    
+    /* Hide mobile nav toggle button */
+    .mobile-nav-toggle {
+      display: none;
+    }
+    
+    /* Simplify the header for mobile */
+    .app-header-inner {
+      justify-content: center;
+      padding: 12px 16px;
+    }
+    
+    .brand-info small {
+      display: none;
+    }
+    
+    /* Adjust footer for mobile with bottom nav */
+    .footer-note {
+      margin-bottom: 16px;
+      font-size: 12px;
+      opacity: 0.8;
+      text-align: center;
+      padding: 0 16px;
+    }
+    
+    /* Product card adjustments for mobile */
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .product-card .card-header {
+      padding-bottom: 12px;
+      text-align: center;
+    }
+    
+    .product-card .card-title {
+      font-size: 16px;
+      line-height: 1.3;
+      text-align: center;
+    }
+    
+    .product-card .card-subtitle {
+      text-align: center;
+      margin: 0 auto;
+    }
+    
+    .carousel-content h2 {
+      margin-bottom: 8px;
+    }
+    
+    .button {
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 8px;
+    }
+    
+    /* Fix product grid on mobile */
+    .grid.three {
+      grid-template-columns: 1fr;
+    }
+    
+    /* Center buttons in product card */
+    .product-card div {
+      justify-content: center;
+      margin-top: 12px;
+    }
+  }
+}
