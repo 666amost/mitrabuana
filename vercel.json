@@ -1,3 +1,6 @@
 {
-  "framework": "react-router"
+  "framework": "react-router",
+  "env": {
+    "APP_BASE_URL": "https://web-erwin.vercel.app"
+  }
 }

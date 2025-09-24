@@ -44,11 +44,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   try {
     if (actionType === "signup") {
+      // Use production URL when available, fallback to request origin
+      const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
       const { data: authData, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${new URL(request.url).origin}/auth/callback`
+          emailRedirectTo: `${baseUrl}/auth/callback`
         }
       });
 
