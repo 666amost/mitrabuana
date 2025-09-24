@@ -1,8 +1,9 @@
 ﻿import { useEffect, useState } from "react";
-import { Form, Link, data, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { Form, Link, data, useLoaderData, useNavigate, type LoaderFunctionArgs } from "react-router";
 import { Badge, Card, EmptyState, PageHeader } from "~/components/ui";
 import { isSupabaseConfigured, listProducts, type Product } from "~/lib/db.server";
 import { SAMPLE_PRODUCTS } from "~/lib/sample-data";
+import { useCart } from "~/lib/cart";
 
 interface LoaderData {
   products: Product[];
@@ -67,12 +68,23 @@ const carouselSlides = (products: Product[]) => {
 
 export default function IndexRoute() {
   const { products, isMock } = useLoaderData<typeof loader>();
+  const { addItem } = useCart();
+  const navigate = useNavigate();
   const slides = carouselSlides(products);
   const totalProducts = products.length;
   const avgPrice = totalProducts ? Math.round(products.reduce((acc, item) => acc + item.price, 0) / totalProducts) : 0;
   const totalStock = products.reduce((acc, item) => acc + (item.stock ?? 0), 0);
 
   const [activeSlide, setActiveSlide] = useState(0);
+
+  const handleAddToCart = (product: Product) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0]
+    });
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -126,9 +138,19 @@ export default function IndexRoute() {
                   <Link className="button primary" to={slide.cta}>
                     Lihat detail
                   </Link>
-                  <Link className="button outline" to={`/checkout?productId=${slide.id}`}>
+                  <button
+                    className="button outline"
+                    type="button"
+                    onClick={() => {
+                      const p = products.find((x) => x.id === slide.id);
+                      if (p) {
+                        addItem({ id: p.id, name: p.name, price: p.price, image: p.images?.[0] });
+                      }
+                      navigate("/checkout");
+                    }}
+                  >
                     Pesan sekarang
-                  </Link>
+                  </button>
                 </div>
               </div>
               <div className="carousel-image">
@@ -247,9 +269,13 @@ export default function IndexRoute() {
                 <Link className="button outline" to={`/product/${product.id}`}>
                   Detail produk
                 </Link>
-                <Link className="button primary" to={`/checkout?productId=${product.id}`}>
-                  Pesan sekarang
-                </Link>
+                <button 
+                  className="button primary" 
+                  onClick={() => handleAddToCart(product)}
+                  type="button"
+                >
+                  Tambah ke Keranjang
+                </button>
               </div>
             </Card>
           ))
@@ -257,11 +283,11 @@ export default function IndexRoute() {
           <EmptyState
             title="Katalog masih kosong"
             description="Tambahkan data produk di Supabase terlebih dahulu. Sistem akan langsung menampilkannya di katalog begitu tersedia."
-            action={
+            action={isMock ? (
               <a className="button primary" href="https://supabase.com" target="_blank" rel="noreferrer">
                 Buka Supabase
               </a>
-            }
+            ) : null}
           />
         )}
       </div>

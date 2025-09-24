@@ -260,6 +260,11 @@ export default function AdminOrderDetailRoute() {
             ) : (
               <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Invoice belum tersedia. Generate ulang jika diperlukan.</p>
             )}
+            {order.paymentProofUrl ? (
+              <div style={{ marginTop: 12 }}>
+                <a className="button" href={order.paymentProofUrl} target="_blank" rel="noreferrer">Lihat bukti bayar</a>
+              </div>
+            ) : null}
             <Form method="post" style={{ marginTop: 12 }}>
               <input type="hidden" name="_action" value="regenerate-invoice" />
               <button type="submit" className="button primary">

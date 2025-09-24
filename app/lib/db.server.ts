@@ -60,6 +60,15 @@ export interface CreateOrderResult {
   lineItems: OrderLineItem[]
 }
 
+export interface Profile {
+  id: string
+  name?: string | null
+  phone?: string | null
+  address?: Record<string, unknown> | null
+  role?: string
+  createdAt?: string | null
+}
+
 let cachedClient: SupabaseClient | null = null
 
 export function isSupabaseConfigured() {
@@ -255,6 +264,21 @@ export async function listOrders(status?: OrderStatus) {
   return (data ?? []).map(mapOrder)
 }
 
+export async function listOrdersByUser(userId: string) {
+  const client = getSupabaseClient()
+  const { data, error } = await client
+    .from("orders")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    throw new Error(`Gagal mengambil order pengguna: ${error.message}`)
+  }
+
+  return (data ?? []).map(mapOrder)
+}
+
 export async function getOrderWithItems(orderId: string) {
   const client = getSupabaseClient()
   const { data, error } = await client
@@ -359,6 +383,50 @@ export async function findOrderByTrackingNumber(awb: string) {
   }
 
   return data ? mapOrder(data) : null
+}
+
+function mapProfile(record: any): Profile {
+  return {
+    id: record.id,
+    name: record.name ?? null,
+    phone: record.phone ?? null,
+    address: record.address_json ?? null,
+    role: record.role ?? 'customer',
+    createdAt: record.created_at ?? null
+  }
+}
+
+export async function getProfile(id: string) {
+  const client = getSupabaseClient()
+  const { data, error } = await client.from("profiles").select("*").eq("id", id).maybeSingle()
+
+  if (error) {
+    throw new Error(`Gagal mengambil profil: ${error.message}`)
+  }
+
+  return data ? mapProfile(data) : null
+}
+
+export async function upsertProfile(id: string, payload: { name?: string | null; phone?: string | null; address?: Record<string, unknown> | null; role?: string | null }) {
+  const client = getSupabaseClient()
+  // Only include 'role' if explicitly provided, otherwise preserve existing value.
+  const toUpsert: Record<string, unknown> = {
+    id,
+    name: payload.name ?? null,
+    phone: payload.phone ?? null,
+    address_json: payload.address ?? null
+  }
+  if (typeof payload.role !== 'undefined' && payload.role !== null) {
+    toUpsert.role = payload.role
+  }
+
+  const { data, error } = await client.from("profiles").upsert(toUpsert, { onConflict: "id" }).select("*").maybeSingle()
+
+  if (error) {
+    throw new Error(`Gagal menyimpan profil: ${error.message}`)
+  }
+
+  return data ? mapProfile(data) : null
 }
 
 

@@ -7,7 +7,30 @@
   --border-subtle: rgba(15, 23, 42, 0.08);
   --text-primary: #111827;
   --text-secondary: #4b5563;
+.order-list .order-item {
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.order-list .order-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
   --text-muted: #6b7280;
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: none;
+}
+.status-pill.pending_payment { background: #fef3c7; color: #92400e; }
+.status-pill.paid { background: #dcfce7; color: #065f46; }
+.status-pill.shipped { background: #dbeafe; color: #1e40af; }
+.status-pill.delivered { background: #e9d5ff; color: #6b21a8; }
+
   --radius-lg: 18px;
   --radius-md: 14px;
   --radius-sm: 10px;
@@ -630,53 +653,117 @@ tr:hover td {
 
 @media (max-width: 900px) {
   .app-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
   .nav-wrapper {
-    width: 100%;
-    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 }
 
-@media (max-width: 720px) {
-  .nav-wrapper {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+/* Mobile Navigation - Marketplace Style */
+@media (max-width: 768px) {
+  .app-header-inner {
+    padding: 12px 16px;
+    justify-content: space-between;
+    align-items: center;
   }
+
+  .brand {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .brand-info strong {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .brand-info small {
+    display: none; /* Hide subtitle on mobile */
+  }
+
+  /* Hide desktop nav on mobile - bottom nav handles navigation */
+  .nav-wrapper .nav-links {
+    display: none !important;
+  }
+
   .mobile-nav-toggle {
-    display: inline-flex;
-    align-self: flex-end;
+    display: none; /* No hamburger menu needed */
   }
-  /* Mobile menu: position menus absolutely under the header so the toggle remains visible
-     and they can overlay content without pushing layout. Limit height to viewport. */
-  .nav-links,
+
+  /* Mobile actions - just cart and login */
   .nav-actions {
-    display: none;
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    top: calc(100% + 8px);
-    flex-direction: column;
-    width: auto;
-    background: rgba(255, 255, 255, 0.98);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 12px;
-    padding: 12px;
-    gap: 12px;
-    max-height: calc(100vh - 120px);
-    overflow: auto;
-    z-index: 65;
-  }
-  .nav-links.is-open,
-  .nav-actions.is-open {
     display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto; /* Push cart button to the right */
   }
-  .nav-link {
-    width: 100%;
+
+  .nav-actions .button {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
   }
+
+  /* Cart button style for mobile */
+  .cart-button {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 8px !important;
+    border-radius: 8px !important;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+}
+
+/* Cart button for desktop */
+@media (min-width: 769px) {
+  .cart-button {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .cart-button:hover {
+    background: var(--bg-accent);
+    color: white;
+    border-color: var(--bg-accent);
+  }
+}
+
+/* Cart counter badge */
+.cart-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 12px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 2px solid var(--bg-primary);
 }
 
 @media (max-width: 560px) {
@@ -869,30 +956,7 @@ tr:hover td {
       padding-bottom: 80px;
     }
     
-    /* Hide the top navigation bar on mobile */
-    .app-header .nav-wrapper .nav-links {
-      display: none;
-    }
-    
-    /* Hide the original nav buttons for mobile */
-    .nav-actions .button {
-      display: none;
-    }
-    
-    /* Hide mobile nav toggle button */
-    .mobile-nav-toggle {
-      display: none;
-    }
-    
-    /* Simplify the header for mobile */
-    .app-header-inner {
-      justify-content: center;
-      padding: 12px 16px;
-    }
-    
-    .brand-info small {
-      display: none;
-    }
+    /* Bottom nav is active on mobile - keep header minimal */
     
     /* Adjust footer for mobile with bottom nav */
     .footer-note {

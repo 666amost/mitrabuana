@@ -13,6 +13,30 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/admindashboard": {
+    params: {};
+  };
+  "/auth/callback": {
+    params: {};
+  };
+  "/auth/register": {
+    params: {};
+  };
+  "/favicon%2Eico": {
+    params: {};
+  };
+  "/auth/profile": {
+    params: {};
+  };
+  "/auth/logout": {
+    params: {};
+  };
+  "/auth/simple": {
+    params: {};
+  };
+  "/favicon/ico": {
+    params: {};
+  };
   "/invoice/:id": {
     params: {
       "id": string;
@@ -23,12 +47,24 @@ type Pages = {
       "id": string;
     };
   };
+  "/auth/login": {
+    params: {};
+  };
   "/lacak/:awb": {
     params: {
       "awb": string;
     };
   };
+  "/dashboard": {
+    params: {};
+  };
   "/checkout": {
+    params: {};
+  };
+  "/profile": {
+    params: {};
+  };
+  "/logout": {
     params: {};
   };
   "/admin": {
@@ -39,12 +75,53 @@ type Pages = {
       "id": string;
     };
   };
+  "/admin/products": {
+    params: {};
+  };
+  "/admin/products/new": {
+    params: {};
+  };
+  "/admin/access": {
+    params: {};
+  };
 };
 
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/invoice/:id" | "/product/:id" | "/lacak/:awb" | "/checkout" | "/admin" | "/admin/orders/:id";
+    page: "/" | "/admindashboard" | "/auth/callback" | "/auth/register" | "/favicon%2Eico" | "/auth/profile" | "/auth/logout" | "/auth/simple" | "/favicon/ico" | "/invoice/:id" | "/product/:id" | "/auth/login" | "/lacak/:awb" | "/dashboard" | "/checkout" | "/profile" | "/logout" | "/admin" | "/admin/orders/:id" | "/admin/products" | "/admin/products/new" | "/admin/access";
+  };
+  "routes/admindashboard.tsx": {
+    id: "routes/admindashboard";
+    page: "/admindashboard";
+  };
+  "routes/auth.callback.tsx": {
+    id: "routes/auth.callback";
+    page: "/auth/callback";
+  };
+  "routes/auth.register.tsx": {
+    id: "routes/auth.register";
+    page: "/auth/register";
+  };
+  "routes/favicon%2Eico.tsx": {
+    id: "routes/favicon%2Eico";
+    page: "/favicon%2Eico";
+  };
+  "routes/auth.profile.tsx": {
+    id: "routes/auth.profile";
+    page: "/auth/profile";
+  };
+  "routes/auth.logout.tsx": {
+    id: "routes/auth.logout";
+    page: "/auth/logout";
+  };
+  "routes/auth.simple.tsx": {
+    id: "routes/auth.simple";
+    page: "/auth/simple";
+  };
+  "routes/favicon.ico.tsx": {
+    id: "routes/favicon.ico";
+    page: "/favicon/ico";
   };
   "routes/invoice.$id.tsx": {
     id: "routes/invoice.$id";
@@ -54,13 +131,29 @@ type RouteFiles = {
     id: "routes/product.$id";
     page: "/product/:id";
   };
+  "routes/auth.login.tsx": {
+    id: "routes/auth.login";
+    page: "/auth/login";
+  };
   "routes/lacak.$awb.tsx": {
     id: "routes/lacak.$awb";
     page: "/lacak/:awb";
   };
+  "routes/dashboard.tsx": {
+    id: "routes/dashboard";
+    page: "/dashboard";
+  };
   "routes/checkout.tsx": {
     id: "routes/checkout";
     page: "/checkout";
+  };
+  "routes/profile.tsx": {
+    id: "routes/profile";
+    page: "/profile";
+  };
+  "routes/logout.tsx": {
+    id: "routes/logout";
+    page: "/logout";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -68,11 +161,23 @@ type RouteFiles = {
   };
   "routes/admin.tsx": {
     id: "routes/admin";
-    page: "/admin" | "/admin/orders/:id";
+    page: "/admin" | "/admin/orders/:id" | "/admin/products" | "/admin/products/new" | "/admin/access";
   };
   "routes/admin.orders.$id.tsx": {
     id: "routes/admin.orders.$id";
     page: "/admin/orders/:id";
+  };
+  "routes/admin.products.tsx": {
+    id: "routes/admin.products";
+    page: "/admin/products" | "/admin/products/new";
+  };
+  "routes/admin.products.new.tsx": {
+    id: "routes/admin.products.new";
+    page: "/admin/products/new";
+  };
+  "routes/admin.access.tsx": {
+    id: "routes/admin.access";
+    page: "/admin/access";
   };
   "routes/admin._index.tsx": {
     id: "routes/admin._index";

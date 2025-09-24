@@ -2,6 +2,7 @@
 import { Badge, Card, PageHeader, PropertyList } from "~/components/ui";
 import { isSupabaseConfigured, getProductById } from "~/lib/db.server";
 import { SAMPLE_PRODUCTS } from "~/lib/sample-data";
+import { useCart } from "~/lib/cart";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const productId = params.id;
@@ -36,7 +37,17 @@ const resolveCategory = (name: string) => {
 
 export default function ProductDetailRoute() {
   const { product, isMock } = useLoaderData<typeof loader>();
+  const { addItem } = useCart();
   const category = resolveCategory(product.name);
+
+  const handleAddToCart = () => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0]
+    });
+  };
 
   return (
     <section>
@@ -57,8 +68,11 @@ export default function ProductDetailRoute() {
             <Link className="button outline" to="/">
               Kembali ke katalog
             </Link>
-            <Link className="button primary" to={`/checkout?productId=${product.id}`}>
-              Tambahkan ke order
+            <button className="button primary" onClick={handleAddToCart}>
+              Tambah ke Keranjang
+            </button>
+            <Link className="button" to="/checkout">
+              Lihat Keranjang
             </Link>
           </div>
         }

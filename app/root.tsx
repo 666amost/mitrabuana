@@ -3,7 +3,10 @@ import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "react-rout
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, data, useLoaderData, Link } from "react-router";
 import { Badge } from "~/components/ui";
 import { BottomNavBar } from "~/components/BottomNavBar";
+import { CartProvider, useCart } from "~/lib/cart";
 import stylesheetUrl from "~/styles/global.css?url";
+import { getSupabaseSession } from "~/lib/session.server";
+import { getProfile } from "~/lib/db.server";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: stylesheetUrl }];
 
@@ -12,19 +15,52 @@ export const meta: MetaFunction = () => [{ title: "Mitra Buana Jaya Part — Pre
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const envReady = Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY));
+  const session = await getSupabaseSession(request);
+  const profile = session?.user?.id ? await getProfile(session.user.id) : null;
 
-  return data({ pathname: url.pathname, envReady });
+  return data({ 
+    pathname: url.pathname, 
+    envReady,
+    auth: {
+      loggedIn: Boolean(session?.user?.id),
+      userId: session?.user?.id || null,
+      // Prefer role from profiles table; fallback to session metadata if available
+      role: (profile?.role as string | undefined) || (session?.user?.role as string | undefined) || 'customer'
+    },
+    env: {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY
+    }
+  });
 };
 
-export default function App() {
-  const { pathname, envReady } = useLoaderData<typeof loader>();
+function CartButton() {
+  const { totalItems } = useCart();
+  
+  return (
+    <Link className="button cart-button" to="/checkout" title="Keranjang">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="m1 1 4 4 2.68 11.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 7H6"></path>
+      </svg>
+      {totalItems > 0 && (
+        <span className="cart-counter">{totalItems}</span>
+      )}
+    </Link>
+  );
+}
+
+function AppContent() {
+  const { pathname, envReady, env, auth } = useLoaderData<typeof loader>();
   const [navOpen, setNavOpen] = useState(false);
 
+  const dashboardHref = auth?.role === 'admin' ? '/admin' : '/dashboard';
   const navItems = [
     { label: "Katalog", href: "/" },
     { label: "Checkout", href: "/checkout" },
     { label: "Lacak", href: "/lacak/demo-awb" },
-    { label: "Admin", href: "/admin" }
+    auth?.loggedIn ? { label: "Dashboard", href: dashboardHref } : { label: "Profil", href: "/profile" }
   ];
 
   const normalize = (href: string) => (href === "/" ? href : `${href}/`);
@@ -90,11 +126,15 @@ export default function App() {
                   })}
                 </nav>
                 <div className={`nav-actions ${navOpen ? "is-open" : ""}`}>
-                  <a className="button outline" href="mailto:sales@mitrabuana.part">
-                    Hubungi Sales
-                  </a>
-                  <Link className="button primary" to="/checkout">
-                    Paket Servis
+                  {/* Cart button for mobile - marketplace style */}
+                  <CartButton />
+                  {auth?.loggedIn ? (
+                    <Link className="button" to="/logout">Keluar</Link>
+                  ) : (
+                    <Link className="button" to="/auth/simple">Masuk</Link>
+                  )}
+                  <Link className="button primary" to="/checkout" style={{ display: 'none' }}>
+                    Checkout
                   </Link>
                 </div>
               </div>
@@ -126,8 +166,21 @@ export default function App() {
           <BottomNavBar />
         </div>
         <ScrollRestoration />
+        <script 
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(env)};`
+          }}
+        />
         <Scripts />
       </body>
     </html>
+  );
+}
+
+export default function App() {
+  return (
+    <CartProvider>
+      <AppContent />
+    </CartProvider>
   );
 }
