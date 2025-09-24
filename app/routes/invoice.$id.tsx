@@ -3,18 +3,7 @@ import { Badge, Card, PageHeader, PropertyList } from "~/components/ui";
 import { isSupabaseConfigured, getOrderWithItems, attachPaymentProof } from "~/lib/db.server";
 import { put } from "@vercel/blob";
 import type { ActionFunctionArgs } from "react-router";
-// Simple on-the-fly WebP conversion via sharp-like dynamic import if available
-async function toWebp(input: Buffer | ArrayBufferLike): Promise<Buffer> {
-  const buf = Buffer.from(input as any);
-  try {
-    // @ts-ignore dynamic import; if sharp is not installed, fallback to original buffer
-    const mod = await import('sharp');
-    const sharp = (mod as any).default ?? (mod as any);
-    return await sharp(buf).webp({ quality: 80 }).toBuffer();
-  } catch {
-    return buf;
-  }
-}
+import { convertToWebpOrJpeg } from "~/lib/image.server";
 import { SAMPLE_ORDER } from "~/lib/sample-data";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -51,14 +40,22 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const uint8 = new Uint8Array(arrayBuffer as ArrayBufferLike);
   // Cast to plain Buffer to avoid Buffer<ArrayBufferLike> vs Buffer<ArrayBuffer> mismatch in TS
   let blob: Buffer = Buffer.from(uint8) as unknown as Buffer;
-  // Convert to webp when possible
-  blob = await toWebp(blob);
-    const filenameBase = (file.name || 'proof').replace(/\.[^.]+$/, '');
-    const { url } = await put(`payment-proofs/${orderId}-${Date.now()}-${filenameBase}.webp`, blob, {
-      access: "public",
-      contentType: "image/webp",
-      token: process.env.BLOB_READ_WRITE_TOKEN
-    } as any);
+  // Convert to WebP, but fall back to JPG if WebP fails.
+  let converted;
+  try {
+    converted = await convertToWebpOrJpeg(blob);
+  } catch (err: any) {
+    console.error('Image conversion failed', err);
+    return data({ ok: false, message: "Gagal mengonversi gambar. Silakan coba lagi atau hubungi admin." }, { status: 500 });
+  }
+
+  const filenameBase = (file.name || 'proof').replace(/\.[^.]+$/, '');
+  const { buffer: uploadBuffer, ext, contentType } = converted;
+  const { url } = await put(`payment-proofs/${orderId}-${Date.now()}-${filenameBase}.${ext}`, uploadBuffer, {
+    access: "public",
+    contentType,
+    token: process.env.BLOB_READ_WRITE_TOKEN
+  } as any);
     await attachPaymentProof(orderId, url);
     return data({ ok: true, proofUrl: url, toast: "Bukti bayar berhasil diupload" });
   }
